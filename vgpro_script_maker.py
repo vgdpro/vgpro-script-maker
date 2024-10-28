@@ -55,7 +55,7 @@ def main():
                         self.step[row] += 1
                         self.button_group[row][3].configure(state = 'disable')
                         if '【永】' in self.button_group[row][3].get():
-                            description = tk.Label(window, text = '发动位置：')
+                            description = tk.Label(window, text = '区域：')
                             description.grid(row = row + 1, column = 2)
                             pull_down = Combobox(window, width = 9)
                             pull_down['values'] = ('【V】', '【R】', '【后列的R】', '【前列的R】', '【V/R】', '【G】', '【手牌】', '【灵魂】 ', '【弃牌区】', '【指令区】', '【封锁区】')
@@ -70,7 +70,7 @@ def main():
                             self.button_group[row].append(description)
                             self.button_group[row].append(pull_down)
                         elif '【自】' in self.button_group[row][3].get():
-                            description = tk.Label(window, text = '发动位置：')
+                            description = tk.Label(window, text = '区域：')
                             description.grid(row = row + 1, column = 2)
                             pull_down = Combobox(window, width = 9)
                             pull_down['values'] = ('【V】', '【R】', '【后列的R】', '【前列的R】', '【V/R】', '【手牌】', '【灵魂】 ', '【弃牌区】', '【指令区】', '【封锁区】')
@@ -102,7 +102,7 @@ def main():
                             self.button_group[row].append(pull_down)
                             self.button_group[row].append(description_II)
                         elif '【起】' in self.button_group[row][3].get():
-                            description = tk.Label(window, text = '发动位置：')
+                            description = tk.Label(window, text = '区域：')
                             description.grid(row = row + 1, column = 2)
                             pull_down = Combobox(window, width = 9)
                             pull_down['values'] = ('【V】', '【R】', '【后列的R】', '【前列的R】', '【V/R】', '【手牌】', '【灵魂】 ', '【弃牌区】', '【指令区】', '【封锁区】')
@@ -131,14 +131,14 @@ def main():
                                 self.button_group[row][i].configure(state = 'disable')
 
                         if '【永】' in self.button_group[row][3].get():
-                            button = tk.Button(window, text = '数值')#, command = lambda: button_function.input())
+                            button = tk.Button(window, text = '数值', command = lambda: button_function.add.new_function(row, 7, 'val'))
                             button.grid(row = row + 1, column = 6)
                             text = tk.Entry(window, width = 5)
                             text.configure(state = 'disable')
                             text.grid(row = row + 1, column = 7)
                             self.button_group[row].append(button)
                             self.button_group[row].append(text)
-                            button = tk.Button(window, text = '场合')#, command = lambda: button_function.input())
+                            button = tk.Button(window, text = '场合', command = lambda: button_function.new_function(row, 9, 'con'))
                             button.grid(row = row + 1, column = 8)
                             text = tk.Entry(window, width = 5)
                             text.configure(state = 'disable')
@@ -160,7 +160,7 @@ def main():
                                 pull_down.grid(row = row + 1, column = 13)
                                 self.button_group[row].append(description)
                                 self.button_group[row].append(pull_down)
-                                button = tk.Button(window, text = '目标筛选')#, command = lambda: button_function.input())
+                                button = tk.Button(window, text = '目标筛选', command = lambda: button_function.new_function(row, 15, 'tg'))
                                 button.grid(row = row + 1, column = 14)
                                 text = tk.Entry(window, width = 5)
                                 text.configure(state = 'disable')
@@ -170,6 +170,82 @@ def main():
 
                     self.button_group[row][1].grid(row = row + 1, column = len(self.button_group[row]) - 2)
                     self.button_group[row][2].grid(row = row + 1, column = len(self.button_group[row]) - 1)
+                
+                def new_function(row, column, func):
+                    new_window = tk.Toplevel()
+                    new_window.title('VgPro代码生成器')
+                    new_window.geometry('980x540')
+                    button_group = []
+                    def submit():
+                        print('submit')
+
+                    def clear():
+                        button_group[0][0].configure(state = 'normal')
+                        for i in range(1, len(button_group)):
+                            for button in button_group[i]:
+                                button.destroy()
+                        del button_group[1]
+                    if func == 'val':
+                        def add_button():
+                            if len(button_group[0][0].get()) == 0:
+                                return
+                            button_group[0][0].configure(state = 'disable')
+                            if '数值' in button_group[0][0].get():
+                                description = tk.Label(new_window, text = '力量+')
+                                description.grid(row = 1, column = 0)
+                                text = tk.Entry(new_window, width = 8)
+                                text.grid(row = 1, column = 1)
+                                text.bind('<Key>', button_function.only_numbers)
+                                button_group.append([description, text])
+                            elif '预设函数' in button_group[0][0].get():
+                                button_group.append([])
+                                pull_down = Combobox(new_window, width = 5)
+                                pull_down['values'] = ('【V】', '【R】', '【后列的R】', '【前列的R】', '【V/R】', '【手牌】', '【灵魂】 ', '【弃牌区】', '【指令区】', '【纹章区】', '【伤害区】', '【封锁区】')
+                                pull_down.grid(row = 1, column = 0)
+                                button_group[1].append(pull_down)
+                                description = tk.Label(new_window, text = '的卡每有1张')
+                                description.grid(row = 1, column = 1)
+                                button_group[1].append(description)
+                                description = tk.Label(new_window, text = '(卡片过滤器)：')
+                                description.grid(row = 1, column = 2)
+                                button_group[1].append(description)
+                                button_I = tk.Button(new_window, text ='+', command = lambda: add_filter())
+                                button_I.grid(row = 1, column = 3)
+                                button_II = tk.Button(new_window, text ='-', command = lambda: remove_filter())
+                                button_II.grid(row = 1, column = 4)
+                                button_group.append([button_I, button_II])
+                                description = tk.Label(new_window, text = '力量+')
+                                description.grid(row = 2, column = 0)
+                                button_group[1].append(description)
+                                text = tk.Entry(new_window, width = 8)
+                                text.grid(row = 2, column = 1)
+                                text.bind('<Key>', button_function.only_numbers)
+                                button_group[1].append(text)
+                            elif '自定函数' in button_group[0][0].get():
+                                description_I = tk.Label(new_window, text = 'function (e,tp,eg,ep,ev,re,r,rp)')
+                                description_I.grid(row = 1, column = 0)
+                                text = tk.Text(new_window, width = 50, height=10)
+                                text.grid(row = 2, column = 0)
+                                description_II = tk.Label(new_window, text = 'end')
+                                description_II.grid(row = 3, column = 0)
+                                button_group.append([description_I, text, description_II])
+
+                        def add_filter():
+                            return
+
+                        def remove_filter():
+                            return
+
+                        pull_down = Combobox(new_window, width = 8)
+                        pull_down['values'] = ('数值', '预设函数', '自定函数')
+                        pull_down.grid(row = 0, column = 0)
+                        button_add = tk.Button(new_window, text = '+', command = lambda: add_button())
+                        button_add.grid(row = 0, column = 1)
+                        button_submit = tk.Button(new_window, text = '提交', command = lambda: submit())
+                        button_submit.grid(row = 0, column = 2)
+                        button_clear = tk.Button(new_window, text = '清空', command = lambda: clear())
+                        button_clear.grid(row = 0, column = 3)
+                        button_group.append([pull_down, button_add, button_submit, button_clear])
 
             class remove:
                 def row(r):
